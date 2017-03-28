@@ -1,0 +1,70 @@
+#inputUsername {
+  display: block;
+}
+
+#chatWindow {
+  display: none;
+}
+
+#chatMsgs {
+  height: 450px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+  .msg {
+    margin: 7px;
+    display: flex;
+    border: 1px solid white;
+  }
+    .msg .icons {
+      flex: 0 0 60px;
+      align-self: center;
+      color: white;
+    }
+    .msg .icons.show { /* icons && show */
+      color: #ddd;
+    }
+      .msg:hover .icons {
+        color: #ddd;
+      }
+      .msg .icons span {
+        cursor: pointer;
+      }
+        .msg:hover .icons span.glyphicon-thumbs-up {
+          color: green;
+        }
+        .msg:hover .icons span.glyphicon-thumbs-down {
+          color: red;
+        }
+        .msg .icons span.me {
+          color: black;
+        }
+    .msg .text {
+      flex: 1 1 auto;
+      overflow-wrap: break-word;
+      width: 0; /* fix for linebreak */
+    }
+    .msg:hover {
+      border-top: 1px dashed #aaa;
+      border-bottom: 1px dashed #aaa;
+    }
+
+#userList {
+  border-left: 1px dotted #aaa;
+  height: 450px;
+  overflow: hidden;
+}
+  #userList h4 {
+    margin-top: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #aaa
+  }
+  #userList div {
+    padding: 1px;
+  }
+
+#chatInput {
+  margin-top: 10px;
+  margin-left: 60px;
+  margin-right: 60px;
+}
