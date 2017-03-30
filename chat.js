@@ -6,14 +6,30 @@ class App
     app = this;
 
     this.doInit();
-    this.doLogin();
+    //this.doLogin();
   }
 
   doInit() {
+    console.log("doInit");
     $("#startChat").addEventListener("click", app.doLogin.bind(app));
     $("#chatInput input").addEventListener("keyup", app.registerChatMsg.bind(app));
+    $("#loginGithub").addEventListener("click", app.doLoginGithub.bind(app));
   }
 
+  doLoginGithub() {
+    console.log("doLoginGithub");
+
+    var provider = new firebase.auth.GithubAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+      .then( result => {
+        var token = result.credential.accessToken;
+        var user = result.user;
+        console.log(user);
+      }).catch( error => {
+        console.log("doLoginGithub() failed:", error);
+        app.doLogout();
+      });
+  }
   doLogin() {
     if (!(usr.hasValidNickname())) { dom.displayLogout(); return; }
 
@@ -150,7 +166,7 @@ class Dom
   displayLogin() {
     $("#navLogin").innerHTML = '<li><a href="#">Log Out</a></li>';
     $("#navLogin li:first-child a").addEventListener("click", app.doLogout.bind(app));
-    $("#inputUsername").style.display = "none";
+    //$("#inputUsername").style.display = "none";
     $("#chatWindow").style.display = "block";
     $("#chatMsgs").innerHTML = "";
 
@@ -159,7 +175,7 @@ class Dom
 
   displayLogout() {
     $("#navLogin").innerHTML = "";
-    $("#inputUsername").style.display = "block";
+    //$("#inputUsername").style.display = "block";
     $("#chatWindow").style.display = "";
   }
 

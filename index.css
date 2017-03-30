@@ -1,5 +1,5 @@
 #inputUsername {
-  display: block;
+  display: none !important; /* block */
 }
 
 #chatWindow {
