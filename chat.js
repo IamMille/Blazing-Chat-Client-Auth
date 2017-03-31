@@ -120,7 +120,7 @@ class App
     if (event.key != "Enter") return;
 
     var inputmsg = ( usr.isHacker ?
-      $("#chatInput input").value.replace(/a/, "4") :
+      $("#chatInput input").value.replace(/a/g, "4") :
       $("#chatInput input").value );
 
     db.ref('msgs/').push({
