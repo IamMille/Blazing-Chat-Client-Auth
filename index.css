@@ -93,3 +93,7 @@ nav #login-dp {
 .hidden {
   display: none;
 }
+.popwidth {
+  
+  width: 250px;
+}

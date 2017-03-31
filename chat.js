@@ -34,7 +34,7 @@ class App
 
         this.doLogin();
       }).catch( error => {
-        console.log("doLoginGithub() failed:", error);
+        alertify.error(`Login failed! <div class="popwidth">${error.message}</div>`);
         app.doLogout();
       });
   }
