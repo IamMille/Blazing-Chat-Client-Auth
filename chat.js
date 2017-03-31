@@ -10,21 +10,29 @@ class App
   }
 
   doInit() {
-    console.log("doInit");
     $("#startChat").addEventListener("click", app.doLogin.bind(app));
     $("#chatInput input").addEventListener("keyup", app.registerChatMsg.bind(app));
-    $("#loginGithub").addEventListener("click", app.doLoginGithub.bind(app));
+    $(".btnLogin").forEach( el => el.addEventListener("click", app.doLoginProvider.bind(app)) );
   }
 
-  doLoginGithub() {
-    console.log("doLoginGithub");
+  doLoginProvider(event) {
+    var pickedProvider = event.target.innerText.trim();
+    var providers = ["Github", "Google"];
+    var isProvider = providers.some( p => p === pickedProvider);
+    if (!isProvider) { console.trace("doLoginProvider(): unkown provider; " + pickedProvider); return; }
 
-    var provider = new firebase.auth.GithubAuthProvider();
+    var provider = new firebase.auth[pickedProvider + "AuthProvider"]();
+    provider.setCustomParameters({ 'prompt': 'select_account' });
+
     firebase.auth().signInWithPopup(provider)
       .then( result => {
-        var token = result.credential.accessToken;
         var user = result.user;
-        console.log(user);
+
+        usr.isHacker = ( result.credential.provider == "github.com" ? true : false );
+        usr.nickname = user.displayName.replace(/\s+/, "") ||
+                       user.email.split("@").splice(0,1);
+
+        this.doLogin();
       }).catch( error => {
         console.log("doLoginGithub() failed:", error);
         app.doLogout();
@@ -56,7 +64,7 @@ class App
 
         db.ref(`users/${nick}`).set({ timestamp: TMS });
 
-        if (nick != 'Mille') {  // skip log JOIN
+        if (nick.substr(0,5) != 'Mille') {  // skip log JOIN
           let newId = db.ref().child('msgs').push().key;
           db.ref(`msgs/${newId}`).set({
             "event": "JOIN",
@@ -71,7 +79,7 @@ class App
         db.ref(`users/${nick}`).onDisconnect().cancel(); // needed if logout, then login
         db.ref(`users/${nick}`).onDisconnect().set(null);
 
-        if (nick != "Mille") { // skip log PART
+        if (nick.substr(0,5) != "Mille") { // skip log PART
           let newId = db.ref().child('msgs').push().key;
           db.ref(`msgs/${newId}`).onDisconnect().cancel();
           db.ref(`msgs/${newId}`).onDisconnect().set({
@@ -95,6 +103,13 @@ class App
   } // doLogin END
 
   doLogout(event) { // can be triggered by onUnload event
+
+    firebase.auth().signOut().then(function() {
+      console.log("Firebase signout successfull");
+    }).catch(function(error) {
+      console.log("Firebase signout problem!!");
+    });
+
     dom.displayLogout();
     if (event) alertify.log("You've been logged out.");
     db.goOffline(); //trigger firebase disconnect
@@ -104,12 +119,16 @@ class App
   registerChatMsg(event) {
     if (event.key != "Enter") return;
 
+    var inputmsg = ( usr.isHacker ?
+      $("#chatInput input").value.replace(/a/, "4") :
+      $("#chatInput input").value );
+
     db.ref('msgs/').push({
       'event': "PRIVMSG",
       timestamp: TMS,
       chan: "#general",
       user: usr.nickname,
-      msg:  $("#chatInput input").value
+      msg: inputmsg
     });
 
     $("#chatInput input").value = "";
@@ -138,12 +157,24 @@ class App
 
 class User
 {
+  constructor() {
+    this._isHacker = null;
+  }
+
+  set isHacker(val) {
+    this._isHacker = val;
+  }
+  get isHacker() {
+    return this._isHacker;
+  }
+
   set nickname(val) {
     if (val) $("#username").value = val;
   }
   get nickname() {
     return $("#username").value.trim();
   }
+
   hasValidNickname()
   {
     if (!Boolean(usr.nickname))
@@ -164,9 +195,9 @@ class Dom
   }
 
   displayLogin() {
-    $("#navLogin").innerHTML = '<li><a href="#">Log Out</a></li>';
-    $("#navLogin li:first-child a").addEventListener("click", app.doLogout.bind(app));
-    //$("#inputUsername").style.display = "none";
+    $("#navLogout").classList.remove("hidden");
+    $("#navLogin" ).classList.add("hidden");
+    $("#navLogout li:first-child a").addEventListener("click", app.doLogout.bind(app));
     $("#chatWindow").style.display = "block";
     $("#chatMsgs").innerHTML = "";
 
@@ -174,8 +205,10 @@ class Dom
   }
 
   displayLogout() {
-    $("#navLogin").innerHTML = "";
-    //$("#inputUsername").style.display = "block";
+    $("#navLogout").classList.add("hidden");
+    $("#navLogin" ).classList.remove("hidden");
+    $("#username").value = ""
+    $("#chatInput input").value = "";
     $("#chatWindow").style.display = "";
   }
 
