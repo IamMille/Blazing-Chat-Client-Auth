@@ -106,11 +106,9 @@ nav #login-dp {
   text-align: center;
 }
 .dropdown-toggle {
-  display: inline; 
+  display: inline;
 }
-body {
-  background-color: grey;
-}
+
 .seperator {
   text-align: center;
   margin-top:10px;
