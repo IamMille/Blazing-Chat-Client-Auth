@@ -36,7 +36,6 @@ nav #login-dp {
   .msg {
     margin: 7px;
     display: flex;
-    border: 1px solid white;
   }
     .msg .icons {
       flex: 0 0 60px;
@@ -94,6 +93,26 @@ nav #login-dp {
   display: none;
 }
 .popwidth {
-  
   width: 250px;
+}
+
+#searchInfo {
+  margin-top: 20px;
+}
+#searchResults {
+  margin-top: 10px;
+}
+#maxResults {
+  text-align: center;
+}
+.dropdown-toggle {
+  display: inline; 
+}
+body {
+  background-color: grey;
+}
+.seperator {
+  text-align: center;
+  margin-top:10px;
+  margin-bottom:10px;
 }
